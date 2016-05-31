@@ -32,16 +32,19 @@ namespace Smokers
                     switch (smokerNumber)
                     {
                         case 1:
+                            SendCommand(Command.PaperOnReady);
                             var response1 = SendCommand(Command.CanSmokerSmokePaper);
                             Waiting(smokerNumber, Command.CanSmokerSmokePaper, response1);                           
                             TwistAndSmoking(smokerNumber);
                             break;
                         case 2:
+                            SendCommand(Command.MatchOnReady);
                             var response2 = SendCommand(Command.CanSmokerSmokeMatch);
                             Waiting(smokerNumber, Command.CanSmokerSmokeMatch, response2);
                             TwistAndSmoking(smokerNumber);
                             break;
                         case 3:
+                            SendCommand(Command.TobaccoOnReady);
                             var response3 = SendCommand(Command.CanSmokerSmokeTobacco);
                             Waiting(smokerNumber, Command.CanSmokerSmokeTobacco, response3);
                             TwistAndSmoking(smokerNumber);

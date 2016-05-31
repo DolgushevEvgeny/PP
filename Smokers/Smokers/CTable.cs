@@ -17,13 +17,16 @@ namespace Smokers
         CanSmokerSmokeMatch = 6,
         CanSmokerSmokeTobacco = 7,
         EndSmokerSmoking = 8,
+        PaperOnReady = 9,
+        MatchOnReady = 10,
+        TobaccoOnReady = 11
     }
 
     enum Response
     {
         Ok = 1,
         YouCanCraft = 2,
-        None = 3
+        None = 3,
     }
 
     class CTable
@@ -39,6 +42,9 @@ namespace Smokers
         private NamedPipeServerStream pipeServer;
         private const string PipeName = "Table";
         private Material material = Material.None;
+        private bool isPaperOnReady = false;
+        private bool isMatchOnReady = false;
+        private bool isTobaccoOnReady_ = false;
 
         private static NamedPipeServerStream CreatePipeServer()
         {
@@ -86,6 +92,15 @@ namespace Smokers
                             break;
                         case Command.EndSmokerSmoking:
                             EndingSmokerSmoking();
+                            break;
+                        case Command.PaperOnReady:
+                            PaperOnReady();
+                            break;
+                        case Command.MatchOnReady:
+                            MatchOnReady();
+                            break;
+                        case Command.TobaccoOnReady:
+                            TobaccoOnReady();
                             break;
                         default:
                             Console.WriteLine("Неизвестная команда");
@@ -160,10 +175,42 @@ namespace Smokers
 
         private void CanAgentCraft()
         {
-            if (material == Material.None)
+            if ((material == Material.None) && isPaperOnReady && isMatchOnReady && isTobaccoOnReady_)
             {
                 pipeServer.WriteByte((byte)Response.YouCanCraft);
             }
+            else
+            {
+                pipeServer.WriteByte((byte)Response.None);
+            }
+        }
+
+        private void PaperOnReady()
+        {
+            isPaperOnReady = true;
+            Console.WriteLine("Значение курильщика 1 - {0}", isPaperOnReady);
+            pipeServer.WriteByte((byte)Response.Ok);
+        }
+
+        private void MatchOnReady()
+        {
+            isMatchOnReady = true;
+            Console.WriteLine("Значение курильщика 2 - {0}", isMatchOnReady);
+            pipeServer.WriteByte((byte)Response.Ok);
+        }
+
+        private void TobaccoOnReady()
+        {
+            isTobaccoOnReady_ = true;
+            Console.WriteLine("Значение курильщика 3 - {0}", isTobaccoOnReady_);
+            //SetIsTobaccoOnReady(true);
+            pipeServer.WriteByte((byte)Response.Ok);
+        }
+
+        private void SetIsTobaccoOnReady(bool value)
+        {
+            Console.WriteLine("Значение {0}", value);
+            isTobaccoOnReady_ = value;
         }
     }
 }
